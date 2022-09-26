@@ -52,6 +52,8 @@ hex-literal = { version = "0.3.4", optional = true }
 pallet-template = { version = "4.0.0-dev", default-features = false, path = "../pallets/template" }
 # aa19，2421，将kt装在runtime wasm里来，注意这里没写版本
 pallet-kitties = {default-features = false, path = "../pallets/kitties"}
+# zz19 
+pallet-game = {default-features = false, path = "../pallets/game"}
 
 
 

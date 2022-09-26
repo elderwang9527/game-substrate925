@@ -48,6 +48,9 @@ pub use pallet_template;
 // aa20.1，runtime中引入kt。
 pub use pallet_kitties;
 
+// zz20.1
+pub use pallet_game;
+
 /// An index to a block.
 pub type BlockNumber = u32;
 
@@ -273,6 +276,11 @@ impl pallet_kitties::Config for Runtime {
 	type Event = Event;
 	type Randomness = RandomnessCollectiveFlip;
 }
+// zz20.2
+impl pallet_game::Config for Runtime {
+	type Event = Event;
+	type Randomness = RandomnessCollectiveFlip;
+}
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
@@ -293,6 +301,8 @@ construct_runtime!(
 		TemplateModule: pallet_template,
 		// aa20.3，runtime中引入kt。编译，此时仍报错，是因为kt，librs里没有写 #![cfg_attr(not(feature = "std"), no_std)]，添加后编译成功
 		Kitties: pallet_kitties,
+		// zz20.3
+		Game:pallet_game,
 	}
 );
 

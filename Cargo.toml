@@ -4,6 +4,8 @@ members = [
     "pallets/template",
     # aa17 引入kt pallet，编译仍报错
     "pallets/kitties",
+    # zz17 注意 pallets/game/cargotoml里用的是pallet-game，但这里要写成pallets/game的形式
+    "pallets/game",
     "runtime",
 ]
 [profile.release]
