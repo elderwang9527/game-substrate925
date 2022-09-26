@@ -10,7 +10,7 @@ pub mod pallet {
 	// zz 16
 	use frame_support::traits::Randomness;
 	// zz 18
-	// use sp_io::hashing::blake2_128;
+	// use sp_io::hashing::blake2_128;	
 
 	// zz1, index for fighter
 	type FighterIndex = u32;
