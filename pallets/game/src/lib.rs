@@ -10,7 +10,7 @@ pub mod pallet {
 	// zz 16
 	use frame_support::traits::Randomness;
 	// zz 18
-	use sp_io::hashing::blake2_128;
+	// use sp_io::hashing::blake2_128;
 
 	// zz1, index for fighter
 	type FighterIndex = u32;
@@ -23,7 +23,7 @@ pub mod pallet {
 
 	// zz4, l2, a Fighter with array [attack, defend, hp]
 	#[derive(Encode, Decode, Clone, PartialEq, Eq, Debug, TypeInfo, MaxEncodedLen)]
-	pub struct Fighter(pub [u8; 16]);
+	pub struct Fighter(pub [u16; 3]);
 
 	#[pallet::config]
 	pub trait Config: frame_system::Config {
@@ -64,22 +64,24 @@ pub mod pallet {
 		// zz13
 		InvalidFighterId,
 		NotOwner,
+		TotalOverflow,
+		DefOverflow,
 	}
 
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
 		// zz11
 		#[pallet::weight(10_000)]
-		pub fn create(origin: OriginFor<T>) -> DispatchResult {
+		pub fn create(origin: OriginFor<T>, hp: u16, atk: u16, def: u16) -> DispatchResult {
 			let who = ensure_signed(origin)?;
+			ensure!(hp + atk * 10 + def * 10 <= 1000, Error::<T>::TotalOverflow);
+			ensure!(def <= 50, Error::<T>::DefOverflow);
 			let fighter_id = Self::get_next_id().map_err(|_| Error::<T>::InvalidFighterId)?;
-
-			let dna = Self::random_value(&who);
+			let dna = [hp, atk, def];
 			let fighter = Fighter(dna);
 			Fighters::<T>::insert(fighter_id, &fighter);
 			FighterOwner::<T>::insert(fighter_id, &who);
 			NextFighterId::<T>::set(fighter_id + 1);
-
 			Self::deposit_event(Event::FighterCreated(who, fighter_id, fighter));
 			Ok(())
 		}
@@ -104,14 +106,14 @@ pub mod pallet {
 
 	impl<T: Config> Pallet<T> {
 		// zz7
-		fn random_value(sender: &T::AccountId) -> [u8; 16] {
-			let payload = (
-				T::Randomness::random_seed(),
-				&sender,
-				<frame_system::Pallet<T>>::extrinsic_index(),
-			);
-			payload.using_encoded(blake2_128)
-		}
+		// fn random_value(sender: &T::AccountId) -> [u8; 16] {
+		// 	let payload = (
+		// 		T::Randomness::random_seed(),
+		// 		&sender,
+		// 		<frame_system::Pallet<T>>::extrinsic_index(),
+		// 	);
+		// 	payload.using_encoded(blake2_128)
+		// }
 
 		// zz8
 		fn get_next_id() -> Result<FighterIndex, ()> {
